@@ -1,0 +1,36 @@
+# Builds the Astro site and publishes dist/ to DarylWxc/DarylWxc.github.io
+# (the user-page repo that serves https://darylwxc.github.io), replacing the
+# old `hexo deploy` flow. Runs on every push to main, or manually.
+name: Deploy blog to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Publish dist/ to DarylWxc.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.DEPLOY_TOKEN }}
+          external_repository: DarylWxc/DarylWxc.github.io
+          publish_branch: main
+          publish_dir: ./dist
