@@ -1,0 +1,31 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import PostList from "../../components/PostList.astro";
+import { getTags } from "../../lib/taxonomy";
+
+export async function getStaticPaths() {
+  const tags = await getTags();
+  return tags.map((t) => ({
+    params: { tag: t.name },
+    props: { posts: t.posts, name: t.name },
+  }));
+}
+
+const { posts, name } = Astro.props;
+---
+
+<PageLayout title={`Tag: ${name}`} pageTitle={name} pageSubtitle={`${posts.length} posts tagged`}>
+  <h1 class="page-heading"><i class="fas fa-tag"></i> {name}</h1>
+  <PostList posts={posts} />
+</PageLayout>
+
+<style>
+  .page-heading {
+    font-size: 1.6rem;
+    margin: 0 0 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .page-heading i { color: var(--theme-color); }
+</style>

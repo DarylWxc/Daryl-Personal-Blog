@@ -1,0 +1,171 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Toc from "../components/Toc.astro";
+import PostNav from "../components/PostNav.astro";
+import RelatedPosts from "../components/RelatedPosts.astro";
+import { SITE } from "../consts";
+import { canonicalCategory } from "../lib/categories";
+import type { Post } from "../lib/posts";
+import "../styles/post.css";
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface Props {
+  post: Post;
+  headings: Heading[];
+  prev?: Post;
+  next?: Post;
+  related: Post[];
+}
+const { post, headings, prev, next, related } = Astro.props;
+const { title, date, updated, categories, tags, cover } = post.data;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+const words = post.body ? post.body.replace(/\s+/g, "").length : 0;
+const readMins = Math.max(1, Math.round(words / 400));
+const postPath = `/posts/${post.id.replace(/\/index$/, "")}/`;
+---
+
+<BaseLayout
+  title={title}
+  banner={cover ?? SITE.defaultBanner}
+  pageTitle={title}
+  showBanner={true}
+  isHome={false}
+>
+  <div id="post-wrap">
+    <div class="post-spacer" aria-hidden="true"></div>
+    <main id="main-content">
+      <article class="post-article">
+        <div class="post-meta">
+          <span><i class="far fa-calendar"></i> Posted {fmt(date)}</span>
+          {
+            updated && (
+              <span>
+                <i class="fas fa-sync-alt" /> Updated {fmt(updated)}
+              </span>
+            )
+          }
+          {
+            categories.map((c) => (
+              <a href={`/categories/${canonicalCategory(c)}/`}>
+                <i class="fas fa-folder-open" /> {canonicalCategory(c)}
+              </a>
+            ))
+          }
+          <span><i class="far fa-file-word"></i> {words} words</span>
+          <span><i class="far fa-clock"></i> {readMins} min</span>
+        </div>
+
+        <div id="article-container">
+          <slot />
+        </div>
+
+        {
+          tags.length > 0 && (
+            <div class="post-tags">
+              {tags.map((t) => (
+                <a href={`/tags/${t.trim()}/`} class="tag-pill">
+                  # {t.trim()}
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </article>
+
+      <PostNav prev={prev} next={next} />
+      <RelatedPosts posts={related} />
+    </main>
+
+    <aside id="aside-content">
+      <Toc headings={headings} />
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Symmetric grid keeps the article centered in the page; the empty
+     left spacer balances the TOC column on the right. */
+  #post-wrap {
+    max-width: 1460px;
+    margin: 0 auto;
+    padding: 2rem 1.2rem;
+    display: grid;
+    grid-template-columns: minmax(0, 300px) minmax(0, 820px) minmax(0, 300px);
+    justify-content: center;
+    gap: 1.2rem;
+    align-items: start;
+  }
+  #post-wrap #aside-content {
+    position: sticky;
+    top: 1.2rem;
+  }
+  @media (max-width: 1200px) {
+    #post-wrap {
+      grid-template-columns: minmax(0, 820px);
+    }
+    .post-spacer {
+      display: none;
+    }
+    #post-wrap #aside-content {
+      position: static;
+    }
+  }
+  .post-article {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 2rem 2.2rem;
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: var(--grey);
+    font-size: 0.84rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid var(--light-grey);
+  }
+  .post-meta i {
+    color: var(--theme-color);
+    margin-right: 0.25rem;
+  }
+  .post-meta a {
+    color: var(--grey);
+  }
+  .post-meta a:hover {
+    color: var(--theme-color);
+  }
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+  .tag-pill {
+    font-size: 0.82rem;
+    color: var(--theme-color);
+    background: rgba(73, 177, 245, 0.08);
+    padding: 0.15rem 0.7rem;
+    border-radius: 12px;
+  }
+  .tag-pill:hover {
+    background: var(--theme-color);
+    color: #fff;
+  }
+  @media (max-width: 768px) {
+    .post-article {
+      padding: 1.4rem 1.2rem;
+    }
+  }
+</style>

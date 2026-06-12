@@ -1,0 +1,23 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import PostList from "../../components/PostList.astro";
+import { getSortedPosts } from "../../lib/posts";
+
+const posts = await getSortedPosts();
+---
+
+<PageLayout title="Archives" pageTitle="Archives" pageSubtitle={`${posts.length} posts`}>
+  <h1 class="page-heading"><i class="fas fa-archive"></i> Archives</h1>
+  <PostList posts={posts} />
+</PageLayout>
+
+<style>
+  .page-heading {
+    font-size: 1.6rem;
+    margin: 0 0 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .page-heading i { color: var(--theme-color); }
+</style>

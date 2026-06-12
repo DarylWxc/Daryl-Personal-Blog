@@ -1,0 +1,31 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import PostList from "../../components/PostList.astro";
+import { getCategories } from "../../lib/taxonomy";
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+  return categories.map((c) => ({
+    params: { category: c.name },
+    props: { posts: c.posts, name: c.name },
+  }));
+}
+
+const { posts, name } = Astro.props;
+---
+
+<PageLayout title={`Category: ${name}`} pageTitle={name} pageSubtitle={`${posts.length} posts`}>
+  <h1 class="page-heading"><i class="fas fa-folder-open"></i> {name}</h1>
+  <PostList posts={posts} />
+</PageLayout>
+
+<style>
+  .page-heading {
+    font-size: 1.6rem;
+    margin: 0 0 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .page-heading i { color: var(--theme-color); }
+</style>

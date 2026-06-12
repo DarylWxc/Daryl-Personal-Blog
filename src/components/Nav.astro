@@ -1,0 +1,127 @@
+---
+import { SITE, NAV } from "../consts";
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path.startsWith(href);
+---
+
+<nav id="nav">
+  <a href="/" class="site-title">{SITE.title}</a>
+
+  <button id="nav-toggle" aria-label="Toggle menu">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div id="nav-menu">
+    {
+      NAV.map((item) => (
+        <a href={item.href} class:list={["menu-item", { active: isActive(item.href) }]}>
+          <i class={item.icon} aria-hidden="true"></i>
+          <span>{item.name}</span>
+        </a>
+      ))
+    }
+  </div>
+</nav>
+
+<style>
+  #nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    color: #fff;
+    background: transparent;
+    transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
+  }
+  /* solid state once scrolled past the banner, or on banner-less pages */
+  :global(body.nav-fixed) #nav,
+  :global(body.no-banner) #nav {
+    background: var(--card-bg);
+    box-shadow: 0 1px 8px 1px rgba(0, 0, 0, 0.1);
+    color: var(--font-color);
+  }
+  .site-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: inherit;
+  }
+  .site-title:hover {
+    color: var(--theme-color);
+  }
+  #nav-menu {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .menu-item {
+    color: inherit;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .menu-item i {
+    font-size: 0.85rem;
+  }
+  .menu-item:hover,
+  .menu-item.active {
+    color: var(--theme-color);
+  }
+  #nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.3rem;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    #nav-toggle {
+      display: block;
+    }
+    #nav-menu {
+      position: absolute;
+      top: 60px;
+      right: 0;
+      flex-direction: column;
+      background: var(--card-bg);
+      color: var(--font-color);
+      min-width: 180px;
+      padding: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 0 0 0 8px;
+      display: none;
+    }
+    #nav-menu.open {
+      display: flex;
+    }
+    .menu-item {
+      color: var(--font-color);
+    }
+  }
+</style>
+
+<script>
+  // Hamburger toggle
+  const toggle = document.getElementById("nav-toggle");
+  const menu = document.getElementById("nav-menu");
+  toggle?.addEventListener("click", () => menu?.classList.toggle("open"));
+
+  // Solid nav after scrolling past most of the banner.
+  const onScroll = () => {
+    const header = document.getElementById("page-header");
+    const threshold = header ? header.offsetHeight - 80 : 80;
+    document.body.classList.toggle("nav-fixed", window.scrollY > threshold);
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+</script>

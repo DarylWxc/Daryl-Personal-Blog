@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="404" showBanner={false}>
+  <div class="notfound">
+    <img src="/img/404.png" alt="404" />
+    <h1>404</h1>
+    <p>Page not found</p>
+    <a class="home-btn" href="/"><i class="fas fa-home"></i> Back Home</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .notfound {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 1rem 3rem;
+  }
+  .notfound img {
+    max-width: 320px;
+    width: 80%;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+  }
+  .notfound h1 {
+    font-size: 3rem;
+    margin: 0;
+    color: var(--theme-color);
+  }
+  .notfound p { color: var(--grey); }
+  .home-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1.4rem;
+    background: var(--theme-color);
+    color: #fff;
+    border-radius: 6px;
+  }
+  .home-btn:hover { background: var(--theme-color-hover); color: #fff; }
+</style>

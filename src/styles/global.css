@@ -1,0 +1,237 @@
+/* ===========================================================================
+   Design tokens — ported from Butterfly (themes/butterfly/source/css/var.styl)
+   =========================================================================== */
+:root {
+  --theme-color: #49b1f5;
+  --theme-color-hover: #ff7242;
+
+  --global-bg: #fff;
+  --font-color: #4c4948;
+  --card-bg: #fff;
+  --sidebar-bg: #fff;
+  --board-bg: #fff;
+
+  --light-grey: #eeeeee;
+  --dark-grey: #cacaca;
+  --grey: #999;
+  --white: #fff;
+
+  --hr-border: #a4d4fb;
+  --text-bg-hover: rgba(73, 177, 245, 0.7);
+  --blockquote-color: #6a737d;
+  --blockquote-bg: #f8f8f8;
+  --pseudo-hover: #ff7242;
+  --scrollbar-color: #49b1f5;
+
+  --card-box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.05);
+  --card-hover-box-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.09);
+
+  --code-bg: #f6f8fa;
+  --code-color: #f47466;
+  --link-color: #49b1f5;
+
+  --font-stack: "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Helvetica Neue", Lato, Roboto, "Microsoft YaHei", sans-serif;
+  --content-max: 1200px;
+  --radius: 8px;
+}
+
+[data-theme="dark"] {
+  --theme-color: #0084d0;
+  --global-bg: #0e0e0e;
+  --font-color: rgba(255, 255, 255, 0.7);
+  --card-bg: #121212;
+  --sidebar-bg: #121212;
+  --board-bg: #121212;
+
+  --light-grey: rgba(255, 255, 255, 0.7);
+  --dark-grey: rgba(255, 255, 255, 0.2);
+  --grey: rgba(255, 255, 255, 0.45);
+  --white: rgba(255, 255, 255, 0.9);
+
+  --hr-border: rgba(255, 255, 255, 0.4);
+  --blockquote-color: rgba(255, 255, 255, 0.7);
+  --blockquote-bg: #1c1c1c;
+  --code-bg: #2c2c2c;
+  --scrollbar-color: #1f1f1f;
+
+  --card-box-shadow: none;
+  --card-hover-box-shadow: none;
+  --link-color: #6bc2ff;
+}
+
+/* ===========================================================================
+   Base / reset
+   =========================================================================== */
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 70px;
+}
+body {
+  margin: 0;
+  font-family: var(--font-stack);
+  font-size: 16px;
+  line-height: 2;
+  color: var(--font-color);
+  background: var(--global-bg);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease;
+}
+
+/* Fixed full-page background image (Butterfly #web_bg). */
+#web_bg {
+  position: fixed;
+  inset: 0;
+  z-index: -999;
+  background: var(--global-bg);
+  background-image: var(--web-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+#web_bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s;
+}
+[data-theme="dark"] #web_bg::before {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: var(--theme-color-hover);
+}
+img {
+  max-width: 100%;
+}
+
+/* ===========================================================================
+   Page layout — banner header + content wrap + sidebar grid
+   =========================================================================== */
+#page-header {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 360px;
+  background-size: cover;
+  background-position: center 40%;
+  background-color: #49b1f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: height 0.5s;
+}
+#page-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+#page-header.not-home {
+  height: 40vh;
+  min-height: 280px;
+}
+.banner-info {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+  padding: 0 1rem;
+  animation: bannerFadeIn 1s 0.2s backwards;
+}
+.banner-info h1 {
+  font-size: 2.5rem;
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.banner-info .subtitle {
+  font-size: 1.1rem;
+  opacity: 0.95;
+}
+@keyframes bannerFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* scroll-down chevron */
+.scroll-down {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  z-index: 1;
+  animation: scrollBounce 1.6s infinite;
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 10px); }
+}
+
+body.no-banner {
+  padding-top: 60px;
+}
+
+#content-wrap {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 2rem 1.2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 1.2rem;
+  align-items: start;
+}
+#content-wrap.full {
+  grid-template-columns: minmax(0, 1fr);
+}
+#aside-content {
+  position: sticky;
+  top: 1.2rem;
+}
+
+@media (max-width: 900px) {
+  #content-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #aside-content {
+    position: static;
+  }
+  #page-header {
+    height: 40vh;
+    min-height: 300px;
+  }
+  .banner-info h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/* Section headings that sit directly on the background image (not inside a
+   card) need light text to stay readable. */
+.page-heading,
+.related-title {
+  color: #fff;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Generic Butterfly card */
+.card-widget,
+.recent-post-item,
+.article-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-box-shadow);
+  transition: box-shadow 0.3s, transform 0.3s;
+}

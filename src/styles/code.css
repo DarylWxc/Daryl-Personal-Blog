@@ -1,0 +1,79 @@
+/* ===========================================================================
+   Code blocks — Shiki dual theme (palenight) + copy button + language label
+   =========================================================================== */
+
+/* Switch Shiki tokens to the dark variant under [data-theme="dark"]. */
+[data-theme="dark"] .astro-code,
+[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+#article-container pre.astro-code {
+  position: relative;
+  margin: 1rem 0;
+  padding: 1.2rem 1rem 1rem;
+  border-radius: 8px;
+  overflow: auto;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New",
+    monospace;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+#article-container pre.astro-code code {
+  font-family: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* Language label, taken from Shiki's data-language attribute */
+#article-container pre.astro-code::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0;
+  right: 3.6rem;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #90a4ae;
+  pointer-events: none;
+}
+
+/* Copy button injected by the BaseLayout script */
+.copy-btn {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.5rem;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.7rem;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #cdd3de;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+}
+#article-container pre.astro-code:hover .copy-btn {
+  opacity: 1;
+}
+.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Inline code */
+#article-container :not(pre) > code {
+  padding: 0.15em 0.4em;
+  margin: 0 2px;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--code-color);
+  font-size: 0.86em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}

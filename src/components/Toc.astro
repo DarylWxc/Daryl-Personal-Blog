@@ -1,0 +1,92 @@
+---
+interface Heading { depth: number; slug: string; text: string }
+interface Props { headings: Heading[] }
+const { headings } = Astro.props;
+// Keep h2–h4; ignore the post title (h1) and very deep headings.
+const items = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
+const minDepth = items.length ? Math.min(...items.map((h) => h.depth)) : 2;
+---
+
+{items.length > 0 && (
+  <div class="card-widget toc-card">
+    <div class="card-title"><i class="fas fa-list-ul"></i> Table of Contents</div>
+    <nav id="toc">
+      <ol>
+        {items.map((h) => (
+          <li class={`toc-l${h.depth - minDepth}`}>
+            <a href={`#${h.slug}`} data-target={h.slug}>{h.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </div>
+)}
+
+<style>
+  .toc-card {
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.2rem;
+  }
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-title i { color: var(--theme-color); }
+  #toc ol {
+    list-style: none;
+    counter-reset: toc;
+    margin: 0;
+    padding: 0;
+  }
+  #toc li { counter-increment: toc; }
+  #toc li a {
+    display: block;
+    /* extra left padding keeps the active border off the text */
+    padding: 0.25rem 0 0.25rem 0.7rem;
+    font-size: 0.86rem;
+    color: var(--font-color);
+    line-height: 1.5;
+    border-left: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  #toc li a::before {
+    content: counters(toc, ".") " ";
+    color: var(--grey);
+    margin-right: 0.3rem;
+  }
+  #toc .toc-l1 a { padding-left: 1.7rem; }
+  #toc .toc-l2 a { padding-left: 2.7rem; }
+  #toc li a:hover,
+  #toc li a.active {
+    color: var(--theme-color);
+    border-left-color: var(--theme-color);
+  }
+</style>
+
+<script>
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>("#toc a[data-target]"),
+  );
+  if (links.length) {
+    const byId = new Map(links.map((l) => [l.dataset.target, l]));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((l) => l.classList.remove("active"));
+            byId.get(e.target.id)?.classList.add("active");
+          }
+        }
+      },
+      { rootMargin: "-10% 0px -80% 0px", threshold: 0 },
+    );
+    links.forEach((l) => {
+      const el = document.getElementById(l.dataset.target!);
+      if (el) observer.observe(el);
+    });
+  }
+</script>

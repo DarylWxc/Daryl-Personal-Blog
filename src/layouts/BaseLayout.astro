@@ -1,0 +1,141 @@
+---
+import { SITE } from "../consts";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import FloatingButtons from "../components/FloatingButtons.astro";
+import MusicPlayer from "../components/MusicPlayer.astro";
+import "../styles/global.css";
+import "../styles/code.css";
+import "../styles/animations.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  banner?: string;
+  pageTitle?: string;
+  pageSubtitle?: string;
+  showBanner?: boolean;
+  isHome?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  banner = SITE.defaultBanner,
+  pageTitle,
+  pageSubtitle,
+  showBanner = true,
+  isHome = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${SITE.title}` : SITE.title;
+---
+
+<!doctype html>
+<html lang={SITE.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{fullTitle}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      referrerpolicy="no-referrer"
+    />
+    {/* Apply saved/system theme before paint to avoid a flash. */}
+    <script is:inline>
+      (function () {
+        try {
+          const saved = localStorage.getItem("theme");
+          const dark =
+            saved === "dark" ||
+            (!saved &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.setAttribute("data-theme", "dark");
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class:list={{ "no-banner": !showBanner }}>
+    <div id="web_bg" style={`--web-bg-image: url('${SITE.webBackground}')`}></div>
+
+    <Nav />
+
+    {
+      showBanner && (
+        <header
+          id="page-header"
+          class:list={{ "not-home": !isHome }}
+          style={`background-image: url('${banner}')`}
+        >
+          <div class="banner-info">
+            <h1>{pageTitle ?? SITE.title}</h1>
+            {pageSubtitle && <p class="subtitle">{pageSubtitle}</p>}
+          </div>
+          {isHome && (
+            <div class="scroll-down" aria-hidden="true">
+              <i class="fas fa-angle-down" />
+            </div>
+          )}
+        </header>
+      )
+    }
+
+    <slot />
+
+    <Footer />
+    <FloatingButtons />
+    <MusicPlayer />
+
+    {/* Scroll-down chevron jumps to content */}
+    <script is:inline>
+      document.querySelector(".scroll-down")?.addEventListener("click", () => {
+        const h = document.getElementById("page-header");
+        if (h)
+          window.scrollTo({ top: h.offsetHeight - 50, behavior: "smooth" });
+      });
+    </script>
+
+    {/* Code-block copy buttons + language label */}
+    <script is:inline>
+      document.querySelectorAll("pre.astro-code").forEach((pre) => {
+        if (pre.querySelector(".copy-btn")) return;
+        const btn = document.createElement("button");
+        btn.className = "copy-btn";
+        btn.type = "button";
+        btn.textContent = "Copy";
+        btn.addEventListener("click", () => {
+          const code = pre.querySelector("code");
+          navigator.clipboard
+            .writeText(code ? code.innerText : pre.innerText)
+            .then(() => {
+              btn.textContent = "Copied!";
+              setTimeout(() => (btn.textContent = "Copy"), 1500);
+            });
+        });
+        pre.appendChild(btn);
+      });
+    </script>
+
+    {/* Floating hearts on click */}
+    <script is:inline>
+      (function () {
+        const colors = ["#ff6b81", "#ff4757", "#ff7242", "#ffa502", "#eccc68"];
+        document.addEventListener("click", (e) => {
+          const heart = document.createElement("span");
+          heart.className = "click-heart";
+          heart.textContent = "❤";
+          heart.style.left = e.clientX + "px";
+          heart.style.top = e.clientY + "px";
+          heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 1000);
+        });
+      })();
+    </script>
+  </body>
+</html>

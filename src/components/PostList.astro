@@ -1,0 +1,85 @@
+---
+import type { Post } from "../lib/posts";
+import { postUrl } from "../lib/slug";
+
+interface Props { posts: Post[] }
+const { posts } = Astro.props;
+
+// Group by year for a Butterfly-style timeline.
+const byYear = new Map<number, Post[]>();
+for (const p of posts) {
+  const y = p.data.date.getFullYear();
+  (byYear.get(y) ?? byYear.set(y, []).get(y)!).push(p);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+---
+
+<div class="timeline">
+  {years.map((year) => (
+    <div class="tl-year-group">
+      <div class="tl-year">{year}</div>
+      <ul class="tl-list">
+        {byYear.get(year)!.map((p) => (
+          <li class="tl-item">
+            <span class="tl-date">{fmt(p.data.date)}</span>
+            <a class="tl-title" href={postUrl(p.id)}>{p.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</div>
+
+<style>
+  .timeline {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 1.6rem 2rem;
+  }
+  .tl-year {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--theme-color);
+    margin: 1rem 0 0.5rem;
+  }
+  .tl-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 1rem;
+    border-left: 2px solid var(--light-grey);
+  }
+  .tl-item {
+    position: relative;
+    padding: 0.4rem 0 0.4rem 1.2rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+  }
+  .tl-item::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: 1rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 2px solid var(--theme-color);
+    transition: background 0.2s;
+  }
+  .tl-item:hover::before { background: var(--theme-color); }
+  .tl-date {
+    color: var(--grey);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    width: 56px;
+  }
+  .tl-title {
+    color: var(--font-color);
+    font-size: 0.98rem;
+  }
+  .tl-title:hover { color: var(--theme-color); }
+</style>

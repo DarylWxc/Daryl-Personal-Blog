@@ -1,0 +1,28 @@
+---
+import { render } from "astro:content";
+import PostLayout from "../../layouts/PostLayout.astro";
+import { getSortedPosts } from "../../lib/posts";
+import { postSlug } from "../../lib/slug";
+import { relatedPosts } from "../../lib/taxonomy";
+
+export async function getStaticPaths() {
+  const posts = await getSortedPosts();
+  return posts.map((post, i) => ({
+    params: { slug: postSlug(post.id) },
+    props: {
+      post,
+      // posts are sorted newest-first; "prev" = older, "next" = newer
+      prev: posts[i + 1],
+      next: posts[i - 1],
+      related: relatedPosts(post, posts, 6),
+    },
+  }));
+}
+
+const { post, prev, next, related } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<PostLayout post={post} headings={headings} prev={prev} next={next} related={related}>
+  <Content />
+</PostLayout>

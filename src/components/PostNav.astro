@@ -1,0 +1,68 @@
+---
+import type { Post } from "../lib/posts";
+import { postUrl } from "../lib/slug";
+
+interface Props { prev?: Post; next?: Post }
+const { prev, next } = Astro.props;
+---
+
+<nav class="post-nav">
+  <div class="pn-item pn-prev">
+    {prev && (
+      <a href={postUrl(prev.id)}>
+        <span class="pn-label"><i class="fas fa-angle-left"></i> Previous</span>
+        <span class="pn-title">{prev.data.title}</span>
+      </a>
+    )}
+  </div>
+  <div class="pn-item pn-next">
+    {next && (
+      <a href={postUrl(next.id)}>
+        <span class="pn-label">Next <i class="fas fa-angle-right"></i></span>
+        <span class="pn-title">{next.data.title}</span>
+      </a>
+    )}
+  </div>
+</nav>
+
+<style>
+  .post-nav {
+    display: flex;
+    gap: 1px;
+    margin: 1.5rem 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--card-box-shadow);
+  }
+  .pn-item {
+    flex: 1;
+    background: var(--card-bg);
+    min-height: 60px;
+  }
+  .pn-item a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 0.8rem 1.2rem;
+    color: var(--font-color);
+  }
+  .pn-next { text-align: right; }
+  .pn-label {
+    font-size: 0.78rem;
+    color: var(--grey);
+  }
+  .pn-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pn-item a:hover { background: var(--theme-color); color: #fff; }
+  .pn-item a:hover .pn-label { color: rgba(255,255,255,0.8); }
+  @media (max-width: 600px) {
+    .post-nav { flex-direction: column; }
+    .pn-next { text-align: left; }
+  }
+</style>

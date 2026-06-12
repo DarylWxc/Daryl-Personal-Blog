@@ -1,0 +1,119 @@
+---
+import { SITE } from "../consts";
+// Recreates the old Hexo/Butterfly player (APlayer + MetingJS) driven by the
+// same NetEase playlist, docked into a left-edge drawer: hidden off-screen
+// with a small handle peeking out, sliding in when clicked.
+//
+// NOTE on the playlist: APlayer clips children (`.aplayer{overflow:hidden}`)
+// and toggles the list by animating max-height, so the list MUST stay in
+// normal flow. We render it above the bar via flex column-reverse; since the
+// drawer is bottom-anchored, the expansion grows upward — same behavior as
+// the old blog's fixed player.
+---
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"
+/>
+
+<div id="music-player">
+  <button id="music-handle" aria-label="Toggle music player">
+    <i class="fas fa-music"></i>
+  </button>
+  <div
+    class="aplayer no-destroy"
+    data-id={SITE.neteasePlaylist}
+    data-server="netease"
+    data-type="playlist"
+    data-fixed="false"
+    data-autoplay="false"
+    data-list-folded="true"
+    data-list-max-height="250px"
+    data-lrcType="-1"
+    data-theme="#49b1f5"
+    data-order="list"
+    data-preload="auto"
+    data-volume="0.7"
+  >
+  </div>
+</div>
+
+{/* APlayer must load before MetingJS, which auto-initialises the player. */}
+<script is:inline src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"
+></script>
+<script
+  is:inline
+  src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"
+></script>
+
+<style is:global>
+  #music-player {
+    position: fixed;
+    left: 0;
+    bottom: 2rem;
+    z-index: 95;
+    width: 320px;
+    /* hidden off-screen to the left; only the handle peeks out */
+    transform: translateX(-320px);
+    transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  #music-player.open {
+    transform: translateX(0);
+  }
+
+  /* Handle tab pinned beside the player bar (the drawer grows upward when
+     the playlist opens, so anchor to the bottom, not the top). */
+  #music-handle {
+    position: absolute;
+    bottom: 8px;
+    right: -40px;
+    width: 40px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    background: var(--theme-color);
+    color: #fff;
+    font-size: 1.05rem;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s;
+  }
+  #music-handle:hover {
+    background: var(--theme-color-hover);
+  }
+
+  /* APlayer widget inside the drawer; list above the bar, in normal flow. */
+  #music-player .aplayer {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 320px;
+    margin: 0;
+    border-radius: 0 10px 0 0;
+    box-shadow: 2px -2px 12px rgba(0, 0, 0, 0.25);
+  }
+  #music-player .aplayer .aplayer-body {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    #music-player,
+    #music-player .aplayer {
+      width: 260px;
+    }
+    #music-player {
+      transform: translateX(-260px);
+    }
+    #music-player.open {
+      transform: translateX(0);
+    }
+  }
+</style>
+
+<script is:inline>
+  document.getElementById("music-handle")?.addEventListener("click", () => {
+    document.getElementById("music-player")?.classList.toggle("open");
+  });
+</script>

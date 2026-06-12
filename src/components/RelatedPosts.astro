@@ -1,0 +1,63 @@
+---
+import type { Post } from "../lib/posts";
+import { postUrl } from "../lib/slug";
+
+interface Props { posts: Post[] }
+const { posts } = Astro.props;
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+---
+
+{posts.length > 0 && (
+  <section class="related">
+    <h2 class="related-title"><i class="fas fa-thumbs-up"></i> Related Posts</h2>
+    <div class="related-grid">
+      {posts.map((p) => (
+        <a class="related-item" href={postUrl(p.id)}>
+          <span class="ri-title">{p.data.title}</span>
+          <span class="ri-date">{fmt(p.data.date)}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .related { margin: 2rem 0 1rem; }
+  .related-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .related-title i { color: var(--theme-color); }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.8rem;
+  }
+  .related-item {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    color: var(--font-color);
+    transition: box-shadow 0.3s, transform 0.2s;
+  }
+  .related-item:hover {
+    box-shadow: var(--card-hover-box-shadow);
+    transform: translateY(-2px);
+    color: var(--theme-color);
+  }
+  .ri-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ri-date { color: var(--grey); font-size: 0.78rem; }
+</style>

@@ -1,0 +1,53 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import { getCategories } from "../../lib/taxonomy";
+
+const categories = await getCategories();
+---
+
+<PageLayout title="Categories" pageTitle="Categories" pageSubtitle={`${categories.length} categories`}>
+  <h1 class="page-heading"><i class="fas fa-folder-open"></i> Categories</h1>
+  <div class="cat-list">
+    {categories.map((c) => (
+      <a class="cat-item" href={`/categories/${c.name}/`}>
+        <span class="cat-name"><i class="fas fa-folder"></i> {c.name}</span>
+        <span class="cat-count">{c.count}</span>
+      </a>
+    ))}
+  </div>
+</PageLayout>
+
+<style>
+  .page-heading {
+    font-size: 1.6rem;
+    margin: 0 0 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .page-heading i { color: var(--theme-color); }
+  .cat-list {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 1rem 1.6rem;
+  }
+  .cat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 0.4rem;
+    border-bottom: 1px solid var(--light-grey);
+    color: var(--font-color);
+  }
+  .cat-item:last-child { border-bottom: none; }
+  .cat-item:hover { color: var(--theme-color); }
+  .cat-item i { color: var(--theme-color); margin-right: 0.5rem; }
+  .cat-count {
+    background: var(--blockquote-bg);
+    color: var(--grey);
+    border-radius: 10px;
+    padding: 0.05rem 0.7rem;
+    font-size: 0.8rem;
+  }
+</style>

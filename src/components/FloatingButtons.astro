@@ -1,0 +1,74 @@
+---
+// Right-side floating buttons: dark-mode toggle + scroll-to-top.
+---
+
+<div id="rightside">
+  <button id="darkmode-toggle" class="rightside-btn" aria-label="Toggle dark mode">
+    <i class="fas fa-moon"></i>
+  </button>
+  <button id="go-up" class="rightside-btn" aria-label="Scroll to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+</div>
+
+<style>
+  #rightside {
+    position: fixed;
+    right: 1rem;
+    bottom: 1.2rem;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .rightside-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+    background: var(--theme-color);
+    color: #fff;
+    font-size: 1rem;
+    transition: background 0.3s, opacity 0.3s;
+  }
+  .rightside-btn:first-child {
+    border-radius: 8px 8px 0 0;
+  }
+  .rightside-btn:last-child {
+    border-radius: 0 0 8px 8px;
+  }
+  .rightside-btn:hover {
+    background: var(--theme-color-hover);
+  }
+  #go-up {
+    opacity: 0;
+    pointer-events: none;
+  }
+  :global(body.nav-fixed) #go-up {
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  // Scroll to top
+  document.getElementById("go-up")?.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // Dark mode toggle (persisted; respects system pref via the inline head script)
+  const btn = document.getElementById("darkmode-toggle");
+  const icon = btn?.querySelector("i");
+  const sync = () => {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    if (icon) icon.className = dark ? "fas fa-sun" : "fas fa-moon";
+  };
+  btn?.addEventListener("click", () => {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    const next = dark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+    sync();
+  });
+  sync();
+</script>

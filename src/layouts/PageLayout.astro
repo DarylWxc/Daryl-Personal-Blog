@@ -1,0 +1,23 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Sidebar from "../components/Sidebar.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  banner?: string;
+  pageTitle?: string;
+  pageSubtitle?: string;
+  isHome?: boolean;
+}
+const props = Astro.props;
+---
+
+<BaseLayout {...props}>
+  <div id="content-wrap">
+    <main id="main-content">
+      <slot />
+    </main>
+    <Sidebar />
+  </div>
+</BaseLayout>

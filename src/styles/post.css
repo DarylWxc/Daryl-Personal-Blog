@@ -1,0 +1,87 @@
+/* ===========================================================================
+   Article content typography (#article-container) — Butterfly-flavored.
+   These are global because markdown HTML is injected at runtime.
+   =========================================================================== */
+#article-container {
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--font-color);
+  word-wrap: break-word;
+}
+#article-container h1,
+#article-container h2,
+#article-container h3,
+#article-container h4,
+#article-container h5,
+#article-container h6 {
+  margin: 1.6rem 0 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  scroll-margin-top: 70px;
+}
+#article-container h1 { font-size: 1.7rem; }
+#article-container h2 {
+  font-size: 1.45rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid var(--light-grey);
+}
+#article-container h3 { font-size: 1.25rem; }
+#article-container h4 { font-size: 1.1rem; }
+#article-container p { margin: 0.8rem 0; }
+#article-container a {
+  color: var(--theme-color);
+  font-weight: 500;
+}
+#article-container a:hover { text-decoration: underline; }
+
+#article-container ul,
+#article-container ol {
+  padding-left: 1.5rem;
+  margin: 0.8rem 0;
+}
+#article-container li { margin: 0.3rem 0; }
+
+#article-container img {
+  display: block;
+  max-width: 100%;
+  margin: 1rem auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+#article-container blockquote {
+  margin: 1rem 0;
+  padding: 0.6rem 1rem;
+  color: var(--blockquote-color);
+  background: var(--blockquote-bg);
+  border-left: 4px solid var(--theme-color);
+  border-radius: 0 4px 4px 0;
+}
+#article-container blockquote p { margin: 0.3rem 0; }
+
+#article-container hr {
+  margin: 1.6rem 0;
+  border: none;
+  border-top: 1px dashed var(--hr-border);
+}
+
+#article-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.92rem;
+}
+#article-container th,
+#article-container td {
+  border: 1px solid var(--light-grey);
+  padding: 0.5rem 0.8rem;
+}
+#article-container th { background: var(--blockquote-bg); }
+
+#article-container strong { color: var(--theme-color); }
+
+/* Hide the auto language label when the fence had no language */
+#article-container pre.astro-code[data-language="plaintext"]::before,
+#article-container pre.astro-code[data-language="text"]::before {
+  content: none;
+}

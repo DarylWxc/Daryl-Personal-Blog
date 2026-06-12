@@ -1,0 +1,55 @@
+---
+interface Props {
+  prev?: string;
+  next?: string;
+  current: number;
+  total: number;
+}
+const { prev, next, current, total } = Astro.props;
+---
+
+<nav class="pagination">
+  {prev ? (
+    <a class="page-btn" href={prev}><i class="fas fa-angle-left"></i> Prev</a>
+  ) : (
+    <span class="page-btn disabled"><i class="fas fa-angle-left"></i> Prev</span>
+  )}
+  <span class="page-number">{current} / {total}</span>
+  {next ? (
+    <a class="page-btn" href={next}>Next <i class="fas fa-angle-right"></i></a>
+  ) : (
+    <span class="page-btn disabled">Next <i class="fas fa-angle-right"></i></span>
+  )}
+</nav>
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 0.8rem 1.2rem;
+  }
+  .page-btn {
+    color: var(--font-color);
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+  }
+  .page-btn:not(.disabled):hover {
+    background: var(--theme-color);
+    color: #fff;
+  }
+  .page-btn.disabled {
+    color: var(--dark-grey);
+    cursor: default;
+  }
+  .page-number {
+    color: var(--grey);
+    font-size: 0.9rem;
+  }
+</style>

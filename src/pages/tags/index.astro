@@ -1,0 +1,45 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import { getTags } from "../../lib/taxonomy";
+
+const tags = await getTags();
+const max = Math.max(...tags.map((t) => t.count), 1);
+// Scale font size between 0.85rem and 1.8rem by frequency.
+const size = (count: number) => (0.85 + (count / max) * 0.95).toFixed(2);
+---
+
+<PageLayout title="Tags" pageTitle="Tags" pageSubtitle={`${tags.length} tags`}>
+  <h1 class="page-heading"><i class="fas fa-tags"></i> Tags</h1>
+  <div class="tag-cloud-page">
+    {tags.map((t) => (
+      <a href={`/tags/${t.name}/`} style={`font-size:${size(t.count)}rem`}>
+        {t.name}<sup>{t.count}</sup>
+      </a>
+    ))}
+  </div>
+</PageLayout>
+
+<style>
+  .page-heading {
+    font-size: 1.6rem;
+    margin: 0 0 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .page-heading i { color: var(--theme-color); }
+  .tag-cloud-page {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--card-box-shadow);
+    padding: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    align-items: baseline;
+    line-height: 2.2;
+  }
+  .tag-cloud-page a { color: var(--font-color); }
+  .tag-cloud-page a:hover { color: var(--theme-color); }
+  .tag-cloud-page sup { color: var(--grey); font-size: 0.6em; }
+</style>
